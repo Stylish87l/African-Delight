@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>African Delight Restaurant</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --font-playfair: 'Playfair Display', serif;
+            --font-inter: 'Inter', sans-serif;
+        }
+
+        /* --- DARK MODE STYLES (Default) --- */
+        .dark {
+            --bg-primary: #0f172a; /* slate-900 */
+            --bg-secondary: #1e293b; /* slate-800 */
+            --bg-tertiary: rgba(30, 41, 59, 0.6); /* slate-800/60 for glass */
+            --text-primary: white;
+            --text-secondary: #e2e8f0; /* slate-200 */
+            --text-muted: #94a3b8; /* slate-400 */
+            --accent-primary: #facc15; /* yellow-400 */
+            --accent-dark: #ca8a04; /* yellow-700 */
+            --border-color: #334155; /* slate-700 */
+        }
+        
+        /* --- LIGHT MODE STYLES (Toggle State) --- */
+        .light {
+            --bg-primary: #f8fafc; /* slate-50 */
+            --bg-secondary: #ffffff; /* white */
+            --bg-tertiary: rgba(255, 255, 255, 0.7);
+            --text-primary: #0f172a; /* slate-900 */
+            --text-secondary: #1e293b; /* slate-800 */
+            --text-muted: #475569; /* slate-600 */
+            --accent-primary: #d97706; /* orange-600 */
+            --accent-dark: #ea580c; /* orange-700 */
+            --border-color: #e2e8f0; /* slate-200 */
+        }
+
+        body {
+            font-family: var(--font-inter);
+            background-color: var(--bg-primary); 
+            color: var(--text-primary); 
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            transition: background-color 0.5s, color 0.5s;
+        }
+        .playfair {
+            font-family: var(--font-playfair);
+        }
+
+        /* Carousel styles for hero section */
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .carousel-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1.2s ease-in-out;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .carousel-slide.active {
+            opacity: 1;
+        }
+
+        .carousel-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            backdrop-filter: none;
+            transition: background-color 0.5s ease;
+        }
+
+        .dark .carousel-overlay {
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+
+        .light .carousel-overlay {
+            background-color: rgba(30, 41, 59, 0.3);
+        }
+
+        /* Carousel navigation dots */
+        .carousel-dots {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            display: flex;
+            gap: 12px;
+        }
+
+        .carousel-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            border: 2px solid var(--accent-primary);
+            background-color: transparent;
+        }
+
+        .carousel-dot.active {
+            background-color: var(--accent-primary);
+            transform: scale(1.3);
+        }
+
+        .carousel-dot:hover {
+            transform: scale(1.2);
+        }
+
+        /* Glass effect uses CSS variable for background color for toggle support */
+        .glass {
+            backdrop-filter: blur(10px);
+            background-color: var(--bg-tertiary); 
+        }
+
+        /* Custom styles for the glowing hover effect on cards */
+        .glow-card {
+            position: relative;
+            overflow: hidden;
+            transition: box-shadow 0.5s ease-out, transform 0.3s ease-out;
+            border: 1px solid rgba(253, 224, 71, 0.2); 
+            background-color: var(--bg-tertiary); /* Use tertiary for background */
+        }
+        .dark .glow-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, rgba(253, 224, 71, 0.3) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s;
+            z-index: 0;
+        }
+        .dark .glow-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(253, 224, 71, 0.3);
+        }
+        .dark .glow-card:hover::before {
+            opacity: 1;
+        }
+
+        /* Light mode glow-card adjustments (simpler shadow) */
+        .light .glow-card {
+            border: 1px solid rgba(217, 119, 6, 0.2);
+            background-color: var(--bg-secondary);
+        }
+        .light .glow-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(217, 119, 6, 0.15);
+        }
+
+        .glow-card > * {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Menu Image hover */
+        .menu-image-container:hover .menu-image {
+            transform: scale(1.1);
+        }
+
+        /* Modal Styles */
+        .modal {
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+        .modal.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        .modal-content {
+            transition: transform 0.3s;
+        }
+        .modal.hidden .modal-content {
+            transform: scale(0.9);
+        }
+
+        /* FAB Menu */
+        #fab-menu.hidden {
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+            visibility: hidden;
+            pointer-events: none;
+        }
+        #fab-menu {
+            transition: opacity 0.3s, transform 0.3s, visibility 0.3s;
+        }
+
+        /* Mobile Navigation Dropdown */
+        #mobile-nav-menu.hidden {
+            opacity: 0;
+            transform: translateY(-10px) scale(0.95);
+            visibility: hidden;
+            pointer-events: none;
+        }
+        #mobile-nav-menu {
+            transition: opacity 0.3s, transform 0.3s, visibility 0.3s;
+        }
+
+        /* Location selector styles */
+        .location-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .location-tab {
+            padding: 10px 20px;
+            border: 2px solid var(--border-color);
+            background-color: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-family: var(--font-inter);
+            font-size: 14px;
+        }
+
+        .location-tab:hover {
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+        }
+
+        .location-tab.active {
+            background-color: var(--accent-primary);
+            color: var(--bg-primary);
+            border-color: var(--accent-primary);
+        }
+
+        .location-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @media (max-width: 768px) {
+            .location-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .location-map-container {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            height: 400px;
+            background-color: var(--bg-secondary);
+        }
+
+        .location-map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .location-info {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .location-header {
+            font-family: var(--font-playfair);
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+
+        .location-detail {
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        .location-detail-icon {
+            color: var(--accent-primary);
+            font-size: 20px;
+            margin-top: 3px;
+            flex-shrink: 0;
+        }
+
+        .location-detail-content {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .location-detail-label {
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .location-detail-value {
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .location-detail-value a {
+            color: var(--accent-primary);
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+
+        .location-detail-value a:hover {
+            opacity: 0.8;
+        }
+
+        .location-btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .location-btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid var(--accent-primary);
+            background-color: var(--accent-primary);
+            color: var(--bg-primary);
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-family: var(--font-inter);
+            font-size: 14px;
+        }
+
+        .location-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(250, 204, 21, 0.3);
+        }
+
+        .location-btn.secondary {
+            background-color: transparent;
+            color: var(--accent-primary);
+        }
+
+        .location-btn.secondary:hover {
+            background-color: var(--accent-primary);
+            color: var(--bg-primary);
+        }
+
+        /* Testimonials Carousel Styles with Auto-Rotation */
+        .testimonials-carousel {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .testimonials-track {
+            display: flex;
+            gap: 24px;
+            overflow: hidden;
+            flex: 1;
+            scroll-behavior: smooth;
+        }
+
+        .testimonials-track.scrolling {
+            scroll-behavior: smooth;
+        }
+
+        .testimonial-card {
+            flex: 0 0 100%;
+            min-width: 100%;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        @media (min-width: 768px) {
+            .testimonial-card {
+                flex: 0 0 calc(50% - 12px);
+                min-width: calc(50% - 12px);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .testimonial-card {
+                flex: 0 0 calc(33.333% - 16px);
+                min-width: calc(33.333% - 16px);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .carousel-control-btn {
+            flex-shrink: 0;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-primary);
+            background-color: transparent;
+            color: var(--accent-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-control-btn:hover {
+            background-color: var(--accent-primary);
+            color: var(--bg-primary);
+            transform: scale(1.1);
+        }
+
+        .carousel-control-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .star-rating {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 12px;
+        }
+
+        .star {
+            color: var(--accent-primary);
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body class="antialiased" onload="setupModalHandlers(); initCarousel(); populateLocations(); initTestimonialCarousel();">
+    
+    <div class="fixed bottom-6 right-6 z-50">
+        <div id="fab-menu" class="hidden absolute bottom-16 right-0 w-max bg-slate-800/90 backdrop-blur-md rounded-xl shadow-2xl p-3 mb-2 border border-yellow-400/30">
+            <button onclick="openModal(); toggleFabMenu();" class="w-full text-left flex items-center p-3 rounded-lg text-white hover:bg-yellow-400/10 transition mb-2">
+                <svg class="w-5 h-5 text-yellow-400 mr-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10h12M7 14h12M19 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><path d="M12 21V4"/></svg>
+                Book a Table
+            </button>
+            <a href="https://wa.me/?text=Hello%20African%20Delight%2C%20I%20have%20an%20enquiry." class="w-full text-left flex items-center p-3 rounded-lg text-white hover:bg-yellow-400/10 transition">
+                <svg class="w-5 h-5 text-yellow-400 mr-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12.013 3c-4.995 0-9.043 4.048-9.043 9.043 0 1.583.41 3.093 1.173 4.417L3.06 21.05l5.053-1.33A8.995 8.995 0 0 0 12.013 21c4.995 0 9.043-4.048 9.043-9.043S17.008 3 12.013 3zm3.904 12.758a.93.93 0 0 1-.659.278.93.93 0 0 1-.663-.298c-1.107-1.12-2.73-1.808-3.921-1.808-.002 0-.004 0-.006 0-.005 0-.009 0-.014 0-1.42 0-2.825.438-4.032 1.258-.29.199-.672.274-1.01.196-.337-.078-.636-.29-.854-.582-.218-.29-.313-.65-.252-1.002.13-1.07.604-2.138 1.19-3.076.082-.13.2-.24.34-.325 1.517-.923 3.327-1.422 5.097-1.422 1.34 0 2.65.348 3.804 1.01.218.12.39.3.504.51.528 1.004.81 2.115.81 3.254a4.43 4.43 0 0 1-.806 2.52c-.172.247-.393.454-.645.617z"/></svg>
+                Chat on WhatsApp
+            </a>
+        </div>
+        <button onclick="toggleFabMenu()" id="fab-button" class="bg-yellow-600 text-slate-950 p-4 rounded-full shadow-2xl hover:bg-yellow-500 transition duration-300 transform hover:scale-105">
+            <svg class="w-7 h-7" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
+    </div>
+
+    <div id="reservationModal" class="modal hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+        <div class="modal-content bg-slate-800 p-8 rounded-xl shadow-2xl max-w-lg w-full m-4 border-2 border-yellow-400/50">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-3xl playfair font-bold text-yellow-400">Book Your Table</h3>
+                <button onclick="closeModal()" class="text-white hover:text-yellow-400 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            </div>
+            <form onsubmit="handleBooking(event)">
+                <div class="mb-4">
+                    <label for="name" class="block text-sm font-medium text-gray-300 mb-1">Full Name</label>
+                    <input type="text" id="name" required class="w-full p-3 rounded bg-slate-700 border border-slate-600 text-white focus:ring-yellow-400 focus:border-yellow-400">
+                </div>
+                <div class="mb-4">
+                    <label for="date" class="block text-sm font-medium text-gray-300 mb-1">Date</label>
+                    <input type="date" id="date" required class="w-full p-3 rounded bg-slate-700 border border-slate-600 text-white focus:ring-yellow-400 focus:border-yellow-400">
+                </div>
+                <div class="mb-4">
+                    <label for="time" class="block text-sm font-medium text-gray-300 mb-1">Time</label>
+                    <input type="time" id="time" required class="w-full p-3 rounded bg-slate-700 border border-slate-600 text-white focus:ring-yellow-400 focus:border-yellow-400">
+                </div>
+                <div class="mb-6">
+                    <label for="guests" class="block text-sm font-medium text-gray-300 mb-1">Number of Guests</label>
+                    <input type="number" id="guests" min="1" required class="w-full p-3 rounded bg-slate-700 border border-slate-600 text-white focus:ring-yellow-400 focus:border-yellow-400">
+                </div>
+                <button type="submit" class="w-full px-4 py-3 bg-yellow-600 text-slate-950 font-bold rounded hover:bg-yellow-500 transition duration-300">
+                    Confirm Reservation
+                </button>
+            </form>
+            <p id="bookingMessage" class="mt-4 text-center text-green-400 hidden">Booking confirmed! We look forward to seeing you.</p>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        let carouselInterval;
+        let testimonialCarouselInterval;
+        const carouselImages = [
+            'https://i.imgur.com/yotcHfR.webp',
+            'https://i.imgur.com/tEMMGYP.webp',
+            'https://i.imgur.com/YRXRNFs.webp',
+            'https://i.imgur.com/yU2PNe5.webp'
+        ];
+
+        const locationsData = [
+            {
+                name: "Ridge",
+                address: "Ridge Hospital, Accra, Car Park",
+                phone: "+233 59 894 2729",
+                email: "info@africandelightrestaurant.com",
+                hours: "Mon-Sun: 24 Hours",
+                mapEmbed: '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3024.1816170445397!2d-74.006!3d40.7128!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25a20d9a4b9cd%3A0x1234567890ab!2s123%20Main%20Street!5e0!3m2!1sen!2sus!4v1234567890" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>'
+            },
+            {
+                name: "Kanda Estate",
+                address: "Kanda Highway, Nuriya Street",
+                phone: "+233 59 404 7523",
+                email: "info@africandelightrestaurant.com",
+                hours: "Mon-Sun: 24 Hours",
+                mapEmbed: '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3024.2816170445397!2d-73.9857!3d40.7580!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25a4d1d9a4b9d%3A0x1234567890cd!2s456%20Park%20Avenue!5e0!3m2!1sen!2sus!4v1234567890" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>'
+            },
+            {
+                name: "Achimota",
+                address: "Forestry Commission Headquarters, Lemon Road",
+                phone: "+233 59 404 7523",
+                email: "info@africandelightrestaurant.com",
+                hours: "Tue-Sun: 5:00 PM - 12:00 AM (Closed Mondays)",
+                mapEmbed: '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3024.3816170445397!2d-73.9626!3d40.7809!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25a3d2d9a4b9e%3A0x1234567890de!2s789%205th%20Avenue!5e0!3m2!1sen!2sus!4v1234567890" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>'
+            },
+            {
+                name: "37 Military Hospital",
+                address: "37 Military Hospital Market",
+                phone: "+233 59 404 7523",
+                email: "info@africandelightrestaurant.com",
+                hours: "Mon-Sun: 10:00 AM - 12:00 AM",
+                mapEmbed: '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3024.4816170445397!2d-74.0194!3d40.7061!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25a5d3d9a4b9f%3A0x1234567890ef!2s321%20Harbor%20Boulevard!5e0!3m2!1sen!2sus!4v1234567890" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>'
+            },
+            {
+                name: "Park Avenue",
+                address: "654 Park Lane, Central Park West",
+                phone: "+1 (555) 567-8901",
+                email: "parkave@africandelight.com",
+                hours: "Mon-Sun: 11:30 AM - 11:00 PM",
+                mapEmbed: '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3024.5816170445397!2d-73.9776!3d40.7683!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25a6d4d9a4ba0%3A0x1234567890fg!2s654%20Park%20Lane!5e0!3m2!1sen!2sus!4v1234567890" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>'
+            },
+            {
+                name: "Airport",
+                address: "999 Aviation Way, Terminal Plaza",
+                phone: "+1 (555) 678-9012",
+                email: "airport@africandelight.com",
+                hours: "Daily: 6:00 AM - 11:00 PM",
+                mapEmbed: '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3024.6816170445397!2d-73.7781!3d40.6413!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25a7d5d9a4ba1%3A0x1234567890gh!2s999%20Aviation%20Way!5e0!3m2!1sen!2sus!4v1234567890" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>'
+            }
+        ];
+
+        const testimonialsData = [
+            {
+                name: "Amara Johnson",
+                role: "Food Enthusiast",
+                rating: 5,
+                image: "https://i.imgur.com/5JhO6m0.png",
+                text: "African Delight took me on a culinary journey I'll never forget! The authentic flavors and warm atmosphere made our celebration unforgettable."
+            },
+            {
+                name: "Kwame Mensah",
+                role: "Business Owner",
+                rating: 5,
+                image: "https://i.imgur.com/Fq8qW7Y.png",
+                text: "Outstanding service and incredible food quality. I've brought all my important clients here and they're always impressed. Highly recommend!"
+            },
+            {
+                name: "Zara Ahmed",
+                role: "Travel Blogger",
+                rating: 5,
+                image: "https://i.imgur.com/nKxZ8pL.png",
+                text: "A gem in the culinary scene! The presentation is as beautiful as the taste. Every dish tells a story of African heritage and modern innovation."
+            },
+            {
+                name: "David Chen",
+                role: "Restaurant Critic",
+                rating: 5,
+                image: "https://i.imgur.com/j4vK2tR.png",
+                text: "Exceptional execution of traditional recipes with a contemporary twist. The tilapia soup was phenomenal. A must-visit destination!"
+            },
+            {
+                name: "Nia Williams",
+                role: "Event Planner",
+                rating: 5,
+                image: "https://i.imgur.com/m8pN5qX.png",
+                text: "Perfect catering partner! Their team was professional and the food exceeded all expectations. Our guests still talk about it months later."
+            },
+            {
+                name: "Jamal Harris",
+                role: "Frequent Diner",
+                rating: 5,
+                image: "https://i.imgur.com/B2rT7sW.png",
+                text: "Been coming here regularly and they never disappoint. Fresh ingredients, beautiful plating, and staff that truly cares about your experience."
+            }
+        ];
+
+        let currentTestimonialIndex = 0;
+
+        // Initialize testimonials carousel with auto-rotation
+        function initTestimonialCarousel() {
+            renderTestimonials();
+            updateCarouselButtons();
+            startTestimonialAutoplay();
+        }
+
+        function renderTestimonials() {
+            const track = document.querySelector('.testimonials-track');
+            if (!track) return;
+            
+            track.innerHTML = testimonialsData.map(testimonial => `
+                <div class="testimonial-card glow-card rounded-xl p-8 shadow-xl">
+                    <div class="flex items-center gap-4 mb-4">
+                        <img src="${testimonial.image}" alt="${testimonial.name}" class="w-14 h-14 rounded-full object-cover border-2" style="border-color: var(--accent-primary);">
+                        <div>
+                            <h4 class="font-bold" style="color: var(--text-primary);">${testimonial.name}</h4>
+                            <p class="text-sm" style="color: var(--text-muted);">${testimonial.role}</p>
+                        </div>
+                    </div>
+                    <div class="star-rating">
+                        ${'★'.repeat(testimonial.rating)}
+                    </div>
+                    <p class="text-sm leading-relaxed" style="color: var(--text-secondary);">"${testimonial.text}"</p>
+                </div>
+            `).join('');
+        }
+
+        function scrollTestimonials(direction) {
+            const track = document.querySelector('.testimonials-track');
+            if (!track) return;
+
+            const cardWidth = track.querySelector('.testimonial-card')?.offsetWidth || 300;
+            const gap = 24;
+            const scrollAmount = cardWidth + gap;
+
+            if (direction === 'next') {
+                track.scrollLeft += scrollAmount;
+            } else {
+                track.scrollLeft -= scrollAmount;
+            }
+
+            updateCarouselButtons();
+            resetTestimonialAutoplay();
+        }
+
+        function updateCarouselButtons() {
+            const track = document.querySelector('.testimonials-track');
+            if (!track) return;
+
+            const prevBtn = document.getElementById('testimonial-prev');
+            const nextBtn = document.getElementById('testimonial-next');
+
+            if (prevBtn) prevBtn.disabled = track.scrollLeft <= 0;
+            if (nextBtn) nextBtn.disabled = track.scrollLeft >= track.scrollWidth - track.clientWidth - 10;
+        }
+
+        // Auto-rotation functions for testimonials carousel
+        function startTestimonialAutoplay() {
+            testimonialCarouselInterval = setInterval(() => {
+                const track = document.querySelector('.testimonials-track');
+                if (!track) return;
+
+                const cardWidth = track.querySelector('.testimonial-card')?.offsetWidth || 300;
+                const gap = 24;
+                const scrollAmount = cardWidth + gap;
+                const maxScroll = track.scrollWidth - track.clientWidth;
+
+                if (track.scrollLeft >= maxScroll - 10) {
+                    track.scrollLeft = 0;
+                } else {
+                    track.scrollLeft += scrollAmount;
+                }
+
+                updateCarouselButtons();
+            }, 5000);
+        }
+
+        function resetTestimonialAutoplay() {
+            clearInterval(testimonialCarouselInterval);
+            startTestimonialAutoplay();
+        }
+
+        function selectLocation(index, element) {
+            const location = locationsData[index];
+            const contentDiv = document.getElementById('location-content');
+            
+            contentDiv.innerHTML = `
+                <div class="location-map-container">
+                    ${location.mapEmbed}
+                </div>
+                <div class="location-info">
+                    <h3 class="location-header">${location.name}</h3>
+                    
+                    <div class="location-detail">
+                        <div class="location-detail-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        </div>
+                        <div class="location-detail-content">
+                            <div class="location-detail-label">Address</div>
+                            <div class="location-detail-value">${location.address}</div>
+                        </div>
+                    </div>
+
+                    <div class="location-detail">
+                        <div class="location-detail-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-3.67-2.61L7 16l-3.37-3.37a2 2 0 0 1 0-2.83L6.92 6.92a2 2 0 0 1 2.83 0L12 10l3.37 3.37a2 2 0 0 1 0 2.83L14.75 16l-1.42 1.42"/></svg>
+                        </div>
+                        <div class="location-detail-content">
+                            <div class="location-detail-label">Phone</div>
+                            <div class="location-detail-value"><a href="tel:${location.phone}">${location.phone}</a></div>
+                        </div>
+                    </div>
+
+                    <div class="location-detail">
+                        <div class="location-detail-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 7L2 7"/></svg>
+                        </div>
+                        <div class="location-detail-content">
+                            <div class="location-detail-label">Email</div>
+                            <div class="location-detail-value"><a href="mailto:${location.email}">${location.email}</a></div>
+                        </div>
+                    </div>
+
+                    <div class="location-detail">
+                        <div class="location-detail-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                        </div>
+                        <div class="location-detail-content">
+                            <div class="location-detail-label">Hours</div>
+                            <div class="location-detail-value">${location.hours}</div>
+                        </div>
+                    </div>
+
+                    <div class="location-btn-group">
+                        <button onclick="openModal()" class="location-btn">Book Table</button>
+                        <button onclick="window.open('https://wa.me/1234567890')" class="location-btn secondary">WhatsApp</button>
+                    </div>
+                </div>
+            `;
+
+            // Update active tab
+            document.querySelectorAll('.location-tab').forEach(tab => tab.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        // Initialize with first location on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const firstTab = document.querySelector('.location-tab.active');
+            if (firstTab) {
+                selectLocation(0, firstTab);
+            }
+        });
+
+        // ... existing carousel logic ...
+        function initCarousel() {
+            showSlide(0);
+            startCarouselAutoplay();
+        }
+
+        function showSlide(index) {
+            const slides = document.querySelectorAll('.carousel-slide');
+            const dots = document.querySelectorAll('.carousel-dot');
+            
+            if (index >= slides.length) {
+                currentSlide = 0;
+            } else if (index < 0) {
+                currentSlide = slides.length - 1;
+            } else {
+                currentSlide = index;
+            }
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+
+            slides[currentSlide].classList.add('active');
+            dots[currentSlide].classList.add('active');
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+            resetCarouselAutoplay();
+        }
+
+        function prevSlide() {
+            showSlide(currentSlide - 1);
+            resetCarouselAutoplay();
+        }
+
+        function goToSlide(index) {
+            showSlide(index);
+            resetCarouselAutoplay();
+        }
+
+        function startCarouselAutoplay() {
+            carouselInterval = setInterval(() => {
+                nextSlide();
+            }, 5000);
+        }
+
+        function resetCarouselAutoplay() {
+            clearInterval(carouselInterval);
+            startCarouselAutoplay();
+        }
+
+        function openModal() {
+            document.getElementById('reservationModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('reservationModal').classList.add('hidden');
+            document.getElementById('bookingMessage').classList.add('hidden');
+        }
+
+        function handleBooking(event) {
+            event.preventDefault();
+            
+            document.getElementById('bookingMessage').classList.remove('hidden');
+            
+            setTimeout(closeModal, 3000); 
+        }
+
+        // --- FAB Button Logic ---
+        function toggleFabMenu() {
+            const menu = document.getElementById('fab-menu');
+            const fabButtonIcon = document.querySelector('#fab-button svg');
+            menu.classList.toggle('hidden');
+            
+            if (menu.classList.contains('hidden')) {
+                fabButtonIcon.innerHTML = '<path d="M12 5v14M5 12h14"/>';
+            } else {
+                fabButtonIcon.innerHTML = '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+            }
+        }
+
+        function toggleMobileNav() {
+            const menu = document.getElementById('mobile-nav-menu');
+            const menuIcon = document.querySelector('#mobile-nav-button svg');
+            menu.classList.toggle('hidden');
+            
+            if (menu.classList.contains('hidden')) {
+                menuIcon.innerHTML = '<path d="M3 6h18M3 12h18M3 18h18"/>';
+            } else {
+                menuIcon.innerHTML = '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+            }
+        }
+
+        function closeMobileNav() {
+            const menu = document.getElementById('mobile-nav-menu');
+            const menuIcon = document.querySelector('#mobile-nav-button svg');
+            menu.classList.add('hidden');
+            menuIcon.innerHTML = '<path d="M3 6h18M3 12h18M3 18h18"/>';
+        }
+
+        // --- Dark Mode Toggle Logic ---
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            const isDark = html.classList.contains('dark');
+            
+            if (isDark) {
+                html.classList.remove('dark');
+                html.classList.add('light');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.remove('light');
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+            updateDarkModeIcon(html.classList.contains('dark'));
+        }
+
+        function updateDarkModeIcon(isDark) {
+            const iconContainer = document.getElementById('dark-mode-toggle-icon');
+            if (iconContainer) {
+                if (isDark) {
+                    iconContainer.innerHTML = '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/>';
+                    iconContainer.setAttribute('title', 'Switch to Light Mode');
+                } else {
+                    iconContainer.innerHTML = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2m-4-8h8m-12 0H2m4.24-8.76l1.42 1.42M16.34 7.66l1.42-1.42M7.66 16.34l-1.42 1.42M17.76 17.76l-1.42-1.42"/>';
+                    iconContainer.setAttribute('title', 'Switch to Dark Mode');
+                }
+            }
+        }
+
+        // Set initial theme and icon based on system/storage preference
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.add('light');
+            }
+            updateDarkModeIcon(document.documentElement.classList.contains('dark'));
+        });
+
+        // To ensure modal handlers are available when the page loads
+        function setupModalHandlers() {
+            // No action needed for onload in this structure, but good practice.
+        }
+
+        // Populate locations on load
+        function populateLocations() {
+            const firstTabButton = document.querySelector('.location-tab');
+            if (firstTabButton) {
+                selectLocation(0, firstTabButton);
+            }
+        }
+
+        // Animation on Scroll (Basic implementation)
+        document.addEventListener('DOMContentLoaded', () => {
+            animateElements();
+            window.addEventListener('resize', updateCarouselButtons);
+        });
+
+        function animateElements() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = 1;
+                        entry.target.style.transform = 'translateY(0)';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            const animatedElements = document.querySelectorAll('[data-animate]');
+            animatedElements.forEach(el => {
+                el.style.opacity = 0;
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+                observer.observe(el);
+            });
+        }
+
+    </script>
+    
+    <div class="min-h-screen">
+        
+        <header class="fixed top-0 w-full z-40 transition-all duration-300 glass py-4 border-b border-white/10 dark:border-white/10 light:border-slate-300/50">
+            <div class="max-w-7xl mx-auto px-6 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl font-bold playfair tracking-wider" style="color: var(--accent-primary);">AFRICAN DELIGHT</span>
+                </div>
+                
+                <!-- Updated navigation with Home, Menu, Services, Location, Gallery -->
+                <nav class="hidden md:flex items-center gap-8">
+                    <a href="https://sites.google.com/view/africandelight/home" class="text-sm font-medium transition-colors hover:text-yellow-400" style="color: var(--text-muted);" title="Go to Home">Home</a>
+                    <a href="https://sites.google.com/view/africandelight/menu" class="text-sm font-medium transition-colors hover:text-yellow-400" style="color: var(--text-muted);" title="View Menu">Menu</a>
+                    <a href="https://sites.google.com/view/africandelight/home#services" class="text-sm font-medium transition-colors hover:text-yellow-400" style="color: var(--text-muted);" title="View Services">Services</a>
+                    <a href="https://sites.google.com/view/africandelight/home#find-us" class="text-sm font-medium transition-colors hover:text-yellow-400" style="color: var(--text-muted);" title="Find Us">Location</a>
+                    <a href="https://sites.google.com/view/africandelight/gallery" class="text-sm font-medium transition-colors hover:text-yellow-400" style="color: var(--text-muted);" title="View Gallery">Gallery</a>
+                </nav>
+
+                <div class="flex items-center gap-4 relative">
+                    <!-- Mobile Navigation Menu Button -->
+                    <button onclick="toggleMobileNav()" id="mobile-nav-button" class="md:hidden p-2 rounded-full hover:bg-slate-700/50 transition" style="color: var(--accent-primary);">
+                        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 6h18M3 12h18M3 18h18"/>
+                        </svg>
+                    </button>
+
+                    <!-- Mobile Navigation Dropdown -->
+                    <!-- Updated mobile nav with Google Sites URLs -->
+                    <div id="mobile-nav-menu" class="hidden absolute top-full right-0 mt-2 w-48 bg-slate-800/95 backdrop-blur-md rounded-xl shadow-2xl border border-yellow-400/30 overflow-hidden">
+                        <a href="https://sites.google.com/view/africandelight/home" onclick="closeMobileNav()" class="block px-4 py-3 text-sm font-medium hover:bg-yellow-400/10 transition border-b border-yellow-400/20" style="color: var(--text-muted);">Home</a>
+                        <a href="https://sites.google.com/view/africandelight/menu" onclick="closeMobileNav()" class="block px-4 py-3 text-sm font-medium hover:bg-yellow-400/10 transition border-b border-yellow-400/20" style="color: var(--text-muted);">Menu</a>
+                        <a href="https://sites.google.com/view/africandelight/home#services" onclick="closeMobileNav()" class="block px-4 py-3 text-sm font-medium hover:bg-yellow-400/10 transition border-b border-yellow-400/20" style="color: var(--text-muted);">Services</a>
+                        <a href="https://sites.google.com/view/africandelight/home#find-us" onclick="closeMobileNav()" class="block px-4 py-3 text-sm font-medium hover:bg-yellow-400/10 transition border-b border-yellow-400/20" style="color: var(--text-muted);">Location</a>
+                        <a href="https://sites.google.com/view/africandelight/gallery" onclick="closeMobileNav()" class="block px-4 py-3 text-sm font-medium hover:bg-yellow-400/10 transition" style="color: var(--text-muted);">Gallery</a>
+                    </div>
+
+                    <button onclick="toggleDarkMode()" class="p-2 rounded-full hover:bg-slate-700/50 transition" style="color: var(--accent-primary);">
+                        <svg id="dark-mode-toggle-icon" class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            </svg>
+                    </button>
+                    <button onclick="openModal()" class="px-5 py-2 text-slate-950 font-semibold rounded hover:bg-yellow-500 transition-colors hidden md:block" style="background-color: var(--accent-primary);">
+                        BOOK NOW
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <section id="home" class="relative h-screen flex items-center justify-center overflow-hidden pt-16">
+            <div class="carousel-container absolute inset-0">
+                <div class="carousel-slide active" style="background-image: url('https://i.imgur.com/yotcHfR.webp');"></div>
+                <div class="carousel-slide" style="background-image: url('https://i.imgur.com/tEMMGYP.webp');"></div>
+                <div class="carousel-slide" style="background-image: url('https://i.imgur.com/YRXRNFs.webp');"></div>
+                <div class="carousel-slide" style="background-image: url('https://i.imgur.com/yU2PNe5.webp');"></div>
+                <div class="carousel-overlay"></div>
+            </div>
+
+            <!-- Navigation dots -->
+            <div class="carousel-dots">
+                <button class="carousel-dot active" onclick="goToSlide(0)" aria-label="Go to slide 1"></button>
+                <button class="carousel-dot" onclick="goToSlide(1)" aria-label="Go to slide 2"></button>
+                <button class="carousel-dot" onclick="goToSlide(2)" aria-label="Go to slide 3"></button>
+                <button class="carousel-dot" onclick="goToSlide(3)" aria-label="Go to slide 4"></button>
+            </div>
+
+            <div class="relative text-center p-8 max-w-5xl mx-auto z-10" data-animate>
+                <p class="text-xl md:text-2xl playfair italic mb-4 tracking-widest" style="color: var(--accent-primary); text-shadow: 0 0 5px rgba(255, 255, 255, 0.1);">
+                    A Taste of Heritage
+                </p>
+                <h1 class="playfair text-7xl md:text-9xl font-extrabold tracking-tighter text-white mb-8 leading-none" style="text-shadow: 0 5px 15px rgba(0, 0, 0, 0.8);">
+                    WELCOME TO AFRICAN DELIGHT
+                </h1>
+                <p class="text-lg md:text-xl mb-10 max-w-3xl mx-auto" style="color: var(--text-muted);">
+                    Experience authentic African cuisine reimagined for the modern palate in a setting of luxurious tranquility.
+                </p>
+                <button onclick="openModal()" class="inline-flex items-center text-slate-950 font-bold py-4 px-10 rounded-full shadow-lg hover:bg-yellow-500 transition duration-300 transform hover:scale-105" style="background-color: var(--accent-primary);">
+                    BOOK A TABLE
+                </button>
+            </div>
+        </section>
+
+        <section id="about" class="py-24 md:py-32 container mx-auto px-6 max-w-6xl">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="relative h-96 rounded-2xl shadow-2xl overflow-hidden" data-animate>
+                    <img src="https://i.imgur.com/FfqI5CG.webp" alt="Restaurant Owner" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-r from-slate-900/70 via-slate-900/40 to-transparent dark:from-slate-950/60 dark:via-slate-950/20 dark:to-transparent light:from-slate-800/50 light:via-slate-800/20 light:to-transparent"></div>
+                </div>
+                <div class="lg:pr-12" data-animate>
+                    <p class="text-sm font-semibold uppercase tracking-widest mb-4" style="color: var(--accent-primary);">Our Story</p>
+                    <h2 class="playfair text-5xl md:text-6xl font-extrabold tracking-tight mb-6" style="color: var(--text-primary);">
+                        Where Tradition Meets Modernity
+                    </h2>
+                    <p class="text-lg mb-6" style="color: var(--text-muted);">
+                        African Delight was founded on a passion for sharing the rich, diverse flavors of the continent. We honor age-old cooking techniques while employing contemporary culinary principles to create dishes that are both deeply familiar and excitingly new.
+                    </p>
+                    <p class="text-md mb-8" style="color: var(--text-muted);">
+                        From the spices of Morocco to the stews of West Africa and the barbecues of South Africa, our menu is a journey across borders, crafted with the freshest, locally sourced ingredients.
+                    </p>
+                    <a href="./menu.html" class="flex items-center font-semibold hover:text-yellow-300 transition" style="color: var(--accent-primary);">
+                        Explore Our Culinary Journey 
+                        <svg class="w-5 h-5 ml-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="menu" class="py-24 md:py-32 border-t border-b border-slate-800" style="background-color: var(--bg-secondary); border-color: var(--border-color);">
+            <div class="container mx-auto px-6 max-w-7xl">
+                <div class="text-center mb-16" data-animate>
+                    <p class="text-sm font-semibold uppercase tracking-widest mb-4" style="color: var(--accent-primary);">Signature Dishes</p>
+                    <h2 class="playfair text-5xl md:text-6xl font-extrabold tracking-tight" style="color: var(--text-primary);">
+                        The Delights of Africa
+                    </h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="glow-card rounded-xl shadow-xl overflow-hidden" data-animate>
+                        <div class="menu-image-container relative h-64 overflow-hidden">
+                            <img src="https://i.imgur.com/wkT2CV8.webp" alt="Jollof Fusion" class="menu-image w-full h-full object-cover transition-transform duration-500">
+                        </div>
+                        <div class="p-6" style="background-color: var(--bg-tertiary);">
+                            <h3 class="text-2xl playfair font-bold mb-2" style="color: var(--accent-primary);">Jollof Fusion</h3>
+                            <p class="mb-3 text-sm" style="color: var(--text-muted);">Smoked rice slow-cooked in a rich tomato and pepper sauce, served with choice of grilled tiger prawns or smoked turkey.</p>
+                            <span class="text-xl font-bold" style="color: var(--accent-primary);">₵50.00</span>
+                        </div>
+                    </div>
+                    
+                    <div class="glow-card rounded-xl shadow-xl overflow-hidden" data-animate>
+                        <div class="menu-image-container relative h-64 overflow-hidden">
+                            <img src="https://i.imgur.com/8zQe2Du.webp" alt="Fried Yam Chips With chicken Or Fish" class="menu-image w-full h-full object-cover transition-transform duration-500">
+                        </div>
+                        <div class="p-6" style="background-color: var(--bg-tertiary);">
+                            <h3 class="text-2xl playfair font-bold mb-2" style="color: var(--accent-primary);">Fried Yam Chips With chicken Or Fish</h3>
+                            <p class="mb-3 text-sm" style="color: var(--text-muted);">Crispy yam, chicken or fish (your choice), salt, seasoning cubes, vegetable oil (for frying), and optional spices (like garlic powder, paprika, or pepper).</p>
+                            <span class="text-xl font-bold" style="color: var(--accent-primary);">₵40.00</span>
+                        </div>
+                    </div>
+                    
+                    <div class="glow-card rounded-xl shadow-xl overflow-hidden" data-animate>
+                        <div class="menu-image-container relative h-64 overflow-hidden">
+                            <img src="https://i.imgur.com/oBpMGeq.webp" alt="Tilapia Light Soup" class="menu-image w-full h-full object-cover transition-transform duration-500">
+                        </div>
+                        <div class="p-6" style="background-color: var(--bg-tertiary);">
+                            <h3 class="text-2xl playfair font-bold mb-2" style="color: var(--accent-primary);">Tilapia Light Soup</h3>
+                            <p class="mb-3 text-sm" style="color: var(--text-muted);">Fresh tilapia, tomatoes, onions, garlic, ginger, scotch bonnet peppers, garden eggs (optional), salt, seasoning cubes, fresh herbs like basil, and water.</p>
+                            <span class="text-xl font-bold" style="color: var(--accent-primary);">₵40.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-16" data-animate>
+                    <a href="https://sites.google.com/view/africandelight/menu" class="text-lg font-semibold hover:text-yellow-300 transition border-b border-yellow-500/50 pb-1" style="color: var(--accent-primary);">
+                        View Full Menu
+                    </a>
+                </div>
+            </div>
+        </section>
+        
+        <section id="services" class="py-24 md:py-32 border-t border-b border-slate-800" style="background-color: var(--bg-secondary); border-color: var(--border-color);">
+            <div class="container mx-auto px-6 max-w-7xl">
+                <div class="text-center mb-16" data-animate>
+                    <p class="text-sm font-semibold uppercase tracking-widest mb-4" style="color: var(--accent-primary);">What We Offer</p>
+                    <h2 class="playfair text-5xl md:text-6xl font-extrabold tracking-tight" style="color: var(--text-primary);">
+                        Premium Services
+                    </h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="glow-card rounded-xl shadow-xl overflow-hidden" data-animate>
+                        <div class="menu-image-container relative h-64 overflow-hidden">
+                            <img src="https://i.imgur.com/vQ6SDMv.webp" alt="Event Catering" class="menu-image w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                        </div>
+                        <div class="p-6" style="background-color: var(--bg-tertiary);">
+                            <h3 class="text-2xl playfair font-bold mb-2" style="color: var(--accent-primary);">Event Catering</h3>
+                            <p class="mb-3 text-sm" style="color: var(--text-muted);">
+                                Planning a special event? Let us take care of the food! We offer professional catering services for weddings, parties, corporate events, and more.
+                            </p>
+                            <p class="text-xs uppercase tracking-wide text-yellow-500 mb-1">Custom Packages Available</p>
+                        </div>
+                    </div>
+
+                    <div class="glow-card rounded-xl shadow-xl overflow-hidden" data-animate>
+                        <div class="menu-image-container relative h-64 overflow-hidden">
+                            <img src="https://i.imgur.com/FeT73R1.webp" alt="Private Functions" class="menu-image w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                        </div>
+                        <div class="p-6" style="background-color: var(--bg-tertiary);">
+                            <h3 class="text-2xl playfair font-bold mb-2" style="color: var(--accent-primary);">Private Functions</h3>
+                            <p class="mb-3 text-sm" style="color: var(--text-muted);">
+                                Exclusive spaces and dining experiences tailored to your vision and intimate gathering size.
+                            </p>
+                            <p class="text-xs uppercase tracking-wide text-yellow-500 mb-1">Venue + Menu Coordination</p>
+                        </div>
+                    </div>
+
+                    <div class="glow-card rounded-xl shadow-xl overflow-hidden" data-animate>
+                        <div class="menu-image-container relative h-64 overflow-hidden">
+                            <img src="https://i.imgur.com/06vq70Z.webp" alt="Custom Orders" class="menu-image w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                        </div>
+                        <div class="p-6" style="background-color: var(--bg-tertiary);">
+                            <h3 class="text-2xl playfair font-bold mb-2" style="color: var(--accent-primary);">Custom Orders</h3>
+                            <p class="mb-3 text-sm" style="color: var(--text-muted);">
+                                We customize our menu to suit your dietary preferences — vegetarian, vegan, gluten-free, and more.
+                            </p>
+                            <p class="text-xs uppercase tracking-wide text-yellow-500 mb-1">Tailored to Your Taste</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-16" data-animate>
+                    <a href="#" class="text-lg font-semibold hover:text-yellow-300 transition border-b border-yellow-500/50 pb-1" style="color: var(--accent-primary);">
+                        Explore All Services
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="find-us" class="py-24 px-6" style="background-color: var(--bg-primary);">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-16" data-animate>
+                    <p class="text-sm font-bold tracking-widest mb-3" style="color: var(--accent-primary);">LOCATION</p>
+                    <h2 class="playfair text-5xl md:text-6xl font-extrabold tracking-tight" style="color: var(--text-primary);">
+                        Find African Delight
+                    </h2>
+                </div>
+
+                <!-- Location selector tabs -->
+                <div class="location-tabs">
+                    <button class="location-tab active" onclick="selectLocation(0, this)">Ridge</button>
+                    <button class="location-tab" onclick="selectLocation(1, this)">Kanda</button>
+                    <button class="location-tab" onclick="selectLocation(2, this)">Achimota</button>
+                    <button class="location-tab" onclick="selectLocation(3, this)">37 Military Hospital</button>
+                    <button class="location-tab" onclick="selectLocation(4, this)">Park Avenue</button>
+                    <button class="location-tab" onclick="selectLocation(5, this)">Airport</button>
+                </div>
+
+                <!-- Location content display -->
+                <div class="location-content" id="location-content">
+                    <!-- Dynamic content will be inserted here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Customer Testimonials Section -->
+        <section id="testimonials" class="py-24 px-6 border-t" style="background-color: var(--bg-secondary); border-color: var(--border-color);">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-16" data-animate>
+                    <p class="text-sm font-bold tracking-widest mb-3" style="color: var(--accent-primary);">CUSTOMER EXPERIENCES</p>
+                    <h2 class="playfair text-5xl md:text-6xl font-extrabold tracking-tight" style="color: var(--text-primary);">
+                        What Our Guests Say
+                    </h2>
+                </div>
+
+                <!-- Testimonials Carousel with Auto-Rotation -->
+                <div class="testimonials-carousel mb-16" data-animate>
+                    <button id="testimonial-prev" class="carousel-control-btn" onclick="scrollTestimonials('prev')" aria-label="Previous testimonials">
+                        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                    </button>
+
+                    <div class="testimonials-track">
+                        <!-- Testimonial cards rendered with auto-rotation -->
+                    </div>
+
+                    <button id="testimonial-next" class="carousel-control-btn" onclick="scrollTestimonials('next')" aria-label="Next testimonials">
+                        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                    </button>
+                </div>
+
+                <!-- Gallery Section -->
+                <div class="mb-16 rounded-xl overflow-hidden h-64 md:h-80" data-animate>
+                    <div class="flex h-full gap-2 group">
+                        <div class="flex-1 overflow-hidden rounded-lg group-hover:flex-[3] transition-all duration-500">
+                            <img src="https://i.imgur.com/xOiwVt8.webp" alt="Gallery 1" class="w-full h-full object-cover" />
+                        </div>
+                        <div class="flex-1 overflow-hidden rounded-lg group-hover:flex-[3] transition-all duration-500">
+                            <img src="https://i.imgur.com/akCS7LA.webp" alt="Gallery 2" class="w-full h-full object-cover" />
+                        </div>
+                        <div class="flex-1 overflow-hidden rounded-lg group-hover:flex-[3] transition-all duration-500">
+                            <img src="https://i.imgur.com/x7vgGPm.webp" alt="Gallery 3" class="w-full h-full object-cover" />
+                        </div>
+                        <div class="flex-1 overflow-hidden rounded-lg group-hover:flex-[3] transition-all duration-500">
+                            <img src="https://i.imgur.com/0lCi7tB.webp" alt="Gallery 4" class="w-full h-full object-cover" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center" data-animate>
+                    <button onclick="openModal()" class="inline-flex items-center mx-auto text-slate-950 font-bold py-4 px-10 rounded-full text-lg shadow-2xl hover:bg-yellow-500 transition duration-300 transform hover:scale-105" style="background-color: var(--accent-primary);">
+                        Reserve Your Table Now
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <footer class="border-t py-12 px-6" style="background-color: var(--bg-secondary); border-color: var(--border-color);">
+            <div class="max-w-7xl mx-auto">
+                <div class="grid md:grid-cols-3 gap-8 mb-8 items-center">
+                    <div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-xl font-bold playfair tracking-wider" style="color: var(--accent-primary);">AFRICAN DELIGHT</span>
+                        </div>
+                        <p class="text-sm" style="color: var(--text-muted);">Experience authentic African cuisine</p>
+                    </div>
+                    
+                    <div class="flex gap-6 justify-center">
+                        <a href="#" class="transition-colors hover:text-yellow-500" style="color: var(--text-muted);" title="Instagram">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 8a4 4 0 0 0-4-4A4 4 0 0 0 8 8M12 12m-3 0a3 3 0 1 0 6 0 3 3 0 1 0-6 0m5-8h.01"/></svg>
+                        </a>
+                        <a href="#" class="transition-colors hover:text-yellow-500" style="color: var(--text-muted);" title="Facebook">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                        </a>
+                        <a href="#" class="transition-colors hover:text-yellow-500" style="color: var(--text-muted);" title="Twitter">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 11-13.4 10a18 18 0 0 1-5-1c.6.9 1.4 1.7 2.4 2.3A12.7 12.7 0 0 0 8 20c.3 0 .7 0 1.2 0a2 2 0 0 0 2.2-2.2c0-.5 0-1-.3-1.4.6-.3 1.1-.7 1.6-1.2l.6-.7c1.7-2.1 2.5-4.5 2.5-7s-.8-4.9-2.5-7l.1-.1A11.4 11.4 0 0 1 14 3.7c.3.1.6.2.9.4s.6.5.9.8l.6.9c.7 1.2 1 2.7.9 4.3v.1a8.5 8.5 0 0 0 .5 3.3c.7 1.3 1.6 2.5 2.8 3.5.7.6 1.4 1.1 2.2 1.5l1.6.8"/></svg>
+                        </a>
+                        <a href="#" class="transition-colors hover:text-yellow-500" style="color: var(--text-muted);" title="TikTok">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.68v13.67a2.4 2.4 0 0 1-2.4 2.4 2.4 2.4 0 0 1-2.4-2.4c.34 0 .67.05.98.14V9.58a5.8 5.8 0 0 0-.98-.08 5.89 5.89 0 0 0 0 11.77 5.89 5.89 0 0 0 5.89-5.89V8.31a7.72 7.72 0 0 0 4.58 1.53V6.75a4.75 4.75 0 0 1-.6-.06z" /></svg>
+                        </a>
+                    </div>
+                    
+                    <div class="text-right">
+                        <p class="text-sm" style="color: var(--text-muted);">© 2025 African Delight Restaurant</p>
+                        <p class="text-sm" style="color: var(--text-muted);">All rights reserved</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+</body>
+</html>

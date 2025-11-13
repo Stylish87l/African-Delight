@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>African Delight Gallery</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --font-playfair: 'Playfair Display', serif;
+            --font-inter: 'Inter', sans-serif;
+        }
+
+        /* --- DARK MODE STYLES (Default) --- */
+        .dark {
+            --bg-primary: #0f172a; /* slate-900 */
+            --bg-secondary: #1e293b; /* slate-800 */
+            --bg-tertiary: rgba(30, 41, 59, 0.6); /* slate-800/60 for glass */
+            --text-primary: white;
+            --text-secondary: #e2e8f0; /* slate-200 */
+            --text-muted: #94a3b8; /* slate-400 */
+            --accent-primary: #facc15; /* yellow-400 */
+            --accent-dark: #ca8a04; /* yellow-700 */
+            --border-color: #334155; /* slate-700 */
+        }
+        
+        /* --- LIGHT MODE STYLES (Toggle State) --- */
+        .light {
+            --bg-primary: #f8fafc; /* slate-50 */
+            --bg-secondary: #ffffff; /* white */
+            --bg-tertiary: rgba(255, 255, 255, 0.7);
+            --text-primary: #0f172a; /* slate-900 */
+            --text-secondary: #1e293b; /* slate-800 */
+            --text-muted: #475569; /* slate-600 */
+            --accent-primary: #d97706; /* orange-600 */
+            --accent-dark: #ea580c; /* orange-700 */
+            --border-color: #e2e8f0; /* slate-200 */
+        }
+
+        body {
+            font-family: var(--font-inter);
+            background-color: var(--bg-primary); 
+            color: var(--text-primary); 
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            transition: background-color 0.5s, color 0.5s;
+        }
+
+        .playfair {
+            font-family: var(--font-playfair);
+        }
+
+        /* Glass effect uses CSS variable for background color for toggle support */
+        .glass {
+            backdrop-filter: blur(10px);
+            background-color: var(--bg-tertiary); 
+        }
+
+        /* Gallery Card Styles - Glassmorphism with Glow Effect */
+        .gallery-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 16px;
+            aspect-ratio: 1;
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 1px solid rgba(253, 224, 71, 0.15);
+            group: "card";
+        }
+
+        .gallery-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, rgba(253, 224, 71, 0.4) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .gallery-card:hover::before {
+            opacity: 1;
+        }
+
+        .gallery-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(253, 224, 71, 0.25), 
+                        0 0 40px rgba(253, 224, 71, 0.15);
+            border-color: rgba(253, 224, 71, 0.4);
+        }
+
+        .gallery-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .gallery-card:hover .gallery-image {
+            transform: scale(1.08);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(15, 23, 42, 0.4) 100%);
+            opacity: 0;
+            transition: all 0.5s ease;
+            z-index: 3;
+            display: flex;
+            align-items: flex-end;
+            padding: 24px;
+        }
+
+        .gallery-card:hover .gallery-overlay {
+            opacity: 1;
+        }
+
+        .gallery-info {
+            color: white;
+            animation: slideUp 0.5s ease forwards;
+            opacity: 0;
+        }
+
+        .gallery-card:hover .gallery-info {
+            opacity: 1;
+            animation: slideUp 0.5s ease forwards;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .gallery-info h3 {
+            font-family: var(--font-playfair);
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--accent-primary);
+        }
+
+        .gallery-info p {
+            font-size: 14px;
+            color: rgba(226, 232, 240, 0.9);
+            line-height: 1.4;
+        }
+
+        /* Gallery Grid */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @media (min-width: 768px) {
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+                gap: 28px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .gallery-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 32px;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Filter Tags */
+        .filter-container {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 48px;
+            flex-wrap: wrap;
+            justify-content: center;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .filter-tag {
+            padding: 10px 24px;
+            border: 2px solid var(--border-color);
+            background-color: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-family: var(--font-inter);
+            font-size: 14px;
+        }
+
+        .filter-tag:hover {
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+            box-shadow: 0 0 20px rgba(253, 224, 71, 0.2);
+        }
+
+        .filter-tag.active {
+            background-color: var(--accent-primary);
+            color: var(--bg-primary);
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 30px rgba(253, 224, 71, 0.3);
+        }
+
+        /* Modal Styles */
+        .modal {
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+        .modal.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        .modal-content {
+            transition: transform 0.3s;
+        }
+        .modal.hidden .modal-content {
+            transform: scale(0.9);
+        }
+
+        .modal-backdrop {
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
+        }
+
+        /* FAB Menu */
+        #fab-menu.hidden {
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+            visibility: hidden;
+            pointer-events: none;
+        }
+        #fab-menu {
+            transition: opacity 0.3s, transform 0.3s, visibility 0.3s;
+        }
+
+        /* Mobile Navigation Dropdown */
+        #mobile-nav-menu.hidden {
+            opacity: 0;
+            transform: translateY(-10px) scale(0.95);
+            visibility: hidden;
+            pointer-events: none;
+        }
+        #mobile-nav-menu {
+            transition: opacity 0.3s, transform 0.3s, visibility 0.3s;
+        }
+    </style>
+</head>
+<body class="antialiased" onload="setupModalHandlers(); initGallery();">
+    
+    <div class="fixed bottom-6 right-6 z-50">
+        <div id="fab-menu" class="hidden absolute bottom-16 right-0 w-max bg-slate-800/90 backdrop-blur-md rounded-xl shadow-2xl p-3 mb-2 border border-yellow-400/30">
+            <button onclick="openModal(); toggleFabMenu();" class="w-full text-left flex items-center p-3 rounded-lg text-white hover:bg-yellow-400/10 transition mb-2">
+                <svg class="w-5 h-5 text-yellow-400 mr-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10h12M7 14h12M19 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><path d="M12 21V4"/></svg>
+                Book a Table
+            </button>
+            <a href="https://wa.me/?text=Hello%20African%20Delight%2C%20I%20have%20an%20enquiry." class="w-full text-left flex items-center p-3 rounded-lg text-white hover:bg-yellow-400/10 transition">
+                <svg class="w-5 h-5 text-yellow-400 mr-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12.013 3c-4.995 0-9.043 4.048-9.043 9.043 0 1.583.41 3.093 1.173 4.417L3.06 21.05l5.053-1.33A8.995 8.995 0 0 0 12.013 21c4.995 0 9.043-4.048 9.043-9.043S17.008 3 12.013 3zm3.904 12.758a.93.93 0 0 1-.659.278.93.93 0 0 1-.663-.298c-1.107-1.12-2.73-1.808-3.921-1.808-.002 0-.004 0-.006 0-.005 0-.009 0-.014 0-1.42 0-2.825.438-4.032 1.258-.29.199-.672.274-1.01.196-.337-.078-.636-.29-.854-.582-.218-.29-.313-.65-.252-1.002.13-1.07.604-2.138 1.19-3.076.082-.13.2-.24.34-.325 1.517-.923 3.327-1.422 5.097-1.422 1.34 0 2.65.348 3.804 1.01.218.12.39.3.504.51.528 1.004.81 2.115.81 3.254a4.43 4.43 0 0 1-.806 2.52c-.172.247-.393.454-.645.617z"/></svg>
+                Chat on WhatsApp
+            </a>
+        </div>
+        <button onclick="toggleFabMenu()" id="fab-button" class="bg-yellow-600 text-slate-950 p-4 rounded-full shadow-2xl hover:bg-yellow-500 transition duration-300 transform hover:scale-105">
+            <svg class="w-7 h-7" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
+    </div>
+
+    <div id="galleryModal" class="modal hidden fixed inset-0 z-50 flex items-center justify-center modal-backdrop">
+        <div class="modal-content bg-slate-800 p-8 rounded-2xl shadow-2xl max-w-2xl w-full m-4 border border-yellow-400/50 relative">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-white hover:text-yellow-400 transition z-10">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+            <div id="modal-gallery-image" class="w-full rounded-lg overflow-hidden mb-6 aspect-square">
+                <img src="/placeholder.svg" alt="" class="w-full h-full object-cover">
+            </div>
+            <div id="modal-gallery-info">
+                <h2 class="text-3xl playfair font-bold text-yellow-400 mb-3"></h2>
+                <p class="text-gray-300 mb-6 leading-relaxed"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header (Reused from main site) -->
+    <header class="fixed top-0 w-full z-40 transition-all duration-300 glass py-4 border-b border-white/10 dark:border-white/10 light:border-slate-300/50">
+        <div class="max-w-7xl mx-auto px-6 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="text-2xl font-bold playfair tracking-wider" style="color: var(--accent-primary);">AFRICAN DELIGHT</span>
+            </div>
+            
+            <nav class="hidden md:flex items-center gap-8">
+                <a href="https://sites.google.com/view/africandelight/home" class="text-sm font-medium transition-colors hover:text-yellow-400" style="color: var(--text-muted);" title="Go to Home">Home</a>
+                <a href="https://sites.google.com/view/africandelight/menu" class="text-sm font-medium transition-colors hover:text-yellow-400" style="color: var(--text-muted);" title="View Menu">Menu</a>
+                <a href="https://sites.google.com/view/africandelight/home#services" class="text-sm font-medium transition-colors hover:text-yellow-400" style="color: var(--text-muted);" title="View Services">Services</a>
+                <a href="https://sites.google.com/view/africandelight/home#find-us" class="text-sm font-medium transition-colors hover:text-yellow-400" style="color: var(--text-muted);" title="Find Us">Location</a>
+                <a href="gallery.html" class="text-sm font-medium transition-colors text-yellow-400" style="color: var(--accent-primary);" title="View Gallery">Gallery</a>
+            </nav>
+
+            <div class="flex items-center gap-4 relative">
+                <button onclick="toggleMobileNav()" id="mobile-nav-button" class="md:hidden p-2 rounded-full hover:bg-slate-700/50 transition" style="color: var(--accent-primary);">
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 6h18M3 12h18M3 18h18"/>
+                    </svg>
+                </button>
+
+                <div id="mobile-nav-menu" class="hidden absolute top-full right-0 mt-2 w-48 bg-slate-800/95 backdrop-blur-md rounded-xl shadow-2xl border border-yellow-400/30 overflow-hidden">
+                    <a href="https://sites.google.com/view/africandelight/home" onclick="closeMobileNav()" class="block px-4 py-3 text-sm font-medium hover:bg-yellow-400/10 transition border-b border-yellow-400/20" style="color: var(--text-muted);">Home</a>
+                    <a href="https://sites.google.com/view/africandelight/menu" onclick="closeMobileNav()" class="block px-4 py-3 text-sm font-medium hover:bg-yellow-400/10 transition border-b border-yellow-400/20" style="color: var(--text-muted);">Menu</a>
+                    <a href="https://sites.google.com/view/africandelight/home#services" onclick="closeMobileNav()" class="block px-4 py-3 text-sm font-medium hover:bg-yellow-400/10 transition border-b border-yellow-400/20" style="color: var(--text-muted);">Services</a>
+                    <a href="https://sites.google.com/view/africandelight/home#find-us" onclick="closeMobileNav()" class="block px-4 py-3 text-sm font-medium hover:bg-yellow-400/10 transition border-b border-yellow-400/20" style="color: var(--text-muted);">Location</a>
+                    <a href="gallery.html" onclick="closeMobileNav()" class="block px-4 py-3 text-sm font-medium hover:bg-yellow-400/10 transition" style="color: var(--accent-primary);">Gallery</a>
+                </div>
+
+                <button onclick="toggleDarkMode()" class="p-2 rounded-full hover:bg-slate-700/50 transition" style="color: var(--accent-primary);">
+                    <svg id="dark-mode-toggle-icon" class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    </svg>
+                </button>
+                <button onclick="openModal()" class="px-5 py-2 text-slate-950 font-semibold rounded hover:bg-yellow-500 transition-colors hidden md:block" style="background-color: var(--accent-primary);">
+                    BOOK NOW
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="pt-24 pb-12">
+        <!-- Hero Section -->
+        <section class="py-16 px-6 text-center">
+            <div class="max-w-5xl mx-auto">
+                <p class="text-sm font-semibold uppercase tracking-widest mb-4" style="color: var(--accent-primary); animation: slideDown 0.6s ease-out;">Our Gallery</p>
+                <h1 class="playfair text-6xl md:text-7xl font-extrabold tracking-tight mb-6" style="color: var(--text-primary); animation: slideDown 0.8s ease-out 0.1s both;">
+                    Culinary Moments
+                </h1>
+                <p class="text-lg" style="color: var(--text-muted); animation: slideDown 1s ease-out 0.2s both;">
+                    Explore the artistry, passion, and flavors that make African Delight a destination for unforgettable dining experiences.
+                </p>
+            </div>
+        </section>
+
+        <!-- Filter Tags -->
+        <section class="px-6 max-w-7xl mx-auto">
+            <div class="filter-container">
+                <button class="filter-tag active" onclick="filterGallery('all', this)">All</button>
+                <button class="filter-tag" onclick="filterGallery('dishes', this)">Signature Dishes</button>
+                <button class="filter-tag" onclick="filterGallery('atmosphere', this)">Atmosphere</button>
+                <button class="filter-tag" onclick="filterGallery('events', this)">Events</button>
+                <button class="filter-tag" onclick="filterGallery('details', this)">Details</button>
+            </div>
+        </section>
+
+        <!-- Gallery Grid -->
+        <section class="px-6 max-w-7xl mx-auto">
+            <div class="gallery-grid" id="gallery-grid">
+                <!-- Gallery items will be rendered here -->
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="py-16 px-6 mt-16 text-center">
+            <div class="max-w-3xl mx-auto glass rounded-2xl py-12 px-8 border border-yellow-400/20">
+                <h2 class="playfair text-4xl md:text-5xl font-bold mb-6" style="color: var(--text-primary);">
+                    Experience the Magic
+                </h2>
+                <p class="text-lg mb-8" style="color: var(--text-muted);">
+                    Every dish is a story, every meal is a celebration. Book your table today and become part of our culinary heritage.
+                </p>
+                <button onclick="openModal()" class="inline-flex items-center text-slate-950 font-bold py-4 px-10 rounded-full text-lg shadow-lg hover:bg-yellow-500 transition duration-300 transform hover:scale-105" style="background-color: var(--accent-primary);">
+                    RESERVE YOUR TABLE
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer (Reused from main site) -->
+    <footer class="border-t py-12 px-6" style="background-color: var(--bg-secondary); border-color: var(--border-color);">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-3 gap-8 mb-8 items-center">
+                <div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-xl font-bold playfair tracking-wider" style="color: var(--accent-primary);">AFRICAN DELIGHT</span>
+                    </div>
+                    <p class="text-sm" style="color: var(--text-muted);">Experience authentic African cuisine</p>
+                </div>
+                
+                <div class="flex gap-6 justify-center">
+                    <a href="#" class="transition-colors hover:text-yellow-500" style="color: var(--text-muted);" title="Instagram">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 8a4 4 0 0 0-4-4A4 4 0 0 0 8 8M12 12m-3 0a3 3 0 1 0 6 0 3 3 0 1 0-6 0m5-8h.01"/></svg>
+                    </a>
+                    <a href="#" class="transition-colors hover:text-yellow-500" style="color: var(--text-muted);" title="Facebook">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                    </a>
+                    <a href="#" class="transition-colors hover:text-yellow-500" style="color: var(--text-muted);" title="Twitter">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 11-13.4 10a18 18 0 0 1-5-1c.6.9 1.4 1.7 2.4 2.3A12.7 12.7 0 0 0 8 20c.3 0 .7 0 1.2 0a2 2 0 0 0 2.2-2.2c0-.5 0-1-.3-1.4.6-.3 1.1-.7 1.6-1.2l.6-.7c1.7-2.1 2.5-4.5 2.5-7s-.8-4.9-2.5-7l.1-.1A11.4 11.4 0 0 1 14 3.7c.3.1.6.2.9.4s.6.5.9.8l.6.9c.7 1.2 1 2.7.9 4.3v.1a8.5 8.5 0 0 0 .5 3.3c.7 1.3 1.6 2.5 2.8 3.5.7.6 1.4 1.1 2.2 1.5l1.6.8"/></svg>
+                    </a>
+                    <a href="#" class="transition-colors hover:text-yellow-500" style="color: var(--text-muted);" title="TikTok">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.68v13.67a2.4 2.4 0 0 1-2.4 2.4 2.4 2.4 0 0 1-2.4-2.4c.34 0 .67.05.98.14V9.58a5.8 5.8 0 0 0-.98-.08 5.89 5.89 0 0 0 0 11.77 5.89 5.89 0 0 0 5.89-5.89V8.31a7.72 7.72 0 0 0 4.58 1.53V6.75a4.75 4.75 0 0 1-.6-.06z" /></svg>
+                    </a>
+                </div>
+                
+                <div class="text-right">
+                    <p class="text-sm" style="color: var(--text-muted);">© 2025 African Delight Restaurant</p>
+                    <p class="text-sm" style="color: var(--text-muted);">All rights reserved</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Gallery Data
+        const galleryItems = [
+            {
+                id: 1,
+                category: 'dishes',
+                title: 'Jollof Fusion',
+                description: 'Our signature smoked rice dish with tender prawns, perfectly balanced with traditional West African spices.',
+                image: 'https://i.imgur.com/wkT2CV8.webp'
+            },
+            {
+                id: 2,
+                category: 'dishes',
+                title: 'Fried Yam Chips',
+                description: 'Crispy golden yam paired with perfectly seasoned chicken, a timeless favorite that delights every palate.',
+                image: 'https://i.imgur.com/8zQe2Du.webp'
+            },
+            {
+                id: 3,
+                category: 'dishes',
+                title: 'Tilapia Light Soup',
+                description: 'Fresh tilapia in a aromatic light broth with garden vegetables and traditional African herbs.',
+                image: 'https://i.imgur.com/oBpMGeq.webp'
+            },
+            {
+                id: 4,
+                category: 'atmosphere',
+                title: 'Fine Dining Experience',
+                description: 'Immerse yourself in our elegant ambiance with warm lighting and sophisticated decor.',
+                image: 'https://i.imgur.com/FfqI5CG.webp'
+            },
+            {
+                id: 5,
+                category: 'events',
+                title: 'Private Events',
+                description: 'Create unforgettable memories in our exclusive event spaces designed for your special occasions.',
+                image: 'https://i.imgur.com/vQ6SDMv.webp'
+            },
+            {
+                id: 6,
+                category: 'events',
+                title: 'Corporate Catering',
+                description: 'Impress your guests with our professional catering services and world-class culinary expertise.',
+                image: 'https://i.imgur.com/FeT73R1.webp'
+            },
+            {
+                id: 7,
+                category: 'details',
+                title: 'Artful Presentation',
+                description: 'Every plate is a masterpiece, combining culinary excellence with stunning visual artistry.',
+                image: 'https://i.imgur.com/06vq70Z.webp'
+            },
+            {
+                id: 8,
+                category: 'atmosphere',
+                title: 'Welcoming Ambiance',
+                description: 'Feel the warmth of African hospitality in every corner of our beautifully designed restaurant.',
+                image: 'https://i.imgur.com/xOiwVt8.webp'
+            },
+            {
+                id: 9,
+                category: 'details',
+                title: 'Premium Ingredients',
+                description: 'Sourced with care from local farms, ensuring freshness and authenticity in every dish.',
+                image: 'https://i.imgur.com/akCS7LA.webp'
+            },
+            {
+                id: 10,
+                category: 'dishes',
+                title: 'African Heritage Cuisine',
+                description: 'Traditional recipes reimagined with modern techniques for an extraordinary culinary journey.',
+                image: 'https://i.imgur.com/x7vgGPm.webp'
+            },
+            {
+                id: 11,
+                category: 'events',
+                title: 'Wedding Celebrations',
+                description: 'Your special day deserves special food and an unforgettable dining experience for all.',
+                image: 'https://i.imgur.com/0lCi7tB.webp'
+            },
+            {
+                id: 12,
+                category: 'atmosphere',
+                title: 'Cultural Connection',
+                description: 'Experience the soul of Africa through our cuisine, decor, and genuine hospitality.',
+                image: 'https://i.imgur.com/yotcHfR.webp'
+            }
+        ];
+
+        let currentFilter = 'all';
+
+        function initGallery() {
+            renderGallery('all');
+        }
+
+        function renderGallery(category) {
+            const grid = document.getElementById('gallery-grid');
+            const filteredItems = category === 'all' 
+                ? galleryItems 
+                : galleryItems.filter(item => item.category === category);
+
+            grid.innerHTML = filteredItems.map((item, index) => `
+                <div class="gallery-card" onclick="openGalleryModal(${item.id})" style="animation: fadeIn 0.6s ease-out ${index * 0.05}s both;">
+                    <img src="${item.image}" alt="${item.title}" class="gallery-image">
+                    <div class="gallery-overlay">
+                        <div class="gallery-info">
+                            <h3>${item.title}</h3>
+                            <p>${item.description}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterGallery(category, element) {
+            currentFilter = category;
+            document.querySelectorAll('.filter-tag').forEach(tag => tag.classList.remove('active'));
+            element.classList.add('active');
+            renderGallery(category);
+        }
+
+        function openGalleryModal(itemId) {
+            const item = galleryItems.find(i => i.id === itemId);
+            if (!item) return;
+
+            document.getElementById('modal-gallery-image').innerHTML = `<img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover">`;
+            document.getElementById('modal-gallery-info').innerHTML = `
+                <h2 class="text-3xl playfair font-bold text-yellow-400 mb-3">${item.title}</h2>
+                <p class="text-gray-300 mb-6 leading-relaxed">${item.description}</p>
+            `;
+            document.getElementById('galleryModal').classList.remove('hidden');
+        }
+
+        function openModal() {
+            document.getElementById('galleryModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('galleryModal').classList.add('hidden');
+        }
+
+        // --- FAB Button Logic ---
+        function toggleFabMenu() {
+            const menu = document.getElementById('fab-menu');
+            const fabButtonIcon = document.querySelector('#fab-button svg');
+            menu.classList.toggle('hidden');
+            
+            if (menu.classList.contains('hidden')) {
+                fabButtonIcon.innerHTML = '<path d="M12 5v14M5 12h14"/>';
+            } else {
+                fabButtonIcon.innerHTML = '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+            }
+        }
+
+        function toggleMobileNav() {
+            const menu = document.getElementById('mobile-nav-menu');
+            const menuIcon = document.querySelector('#mobile-nav-button svg');
+            menu.classList.toggle('hidden');
+            
+            if (menu.classList.contains('hidden')) {
+                menuIcon.innerHTML = '<path d="M3 6h18M3 12h18M3 18h18"/>';
+            } else {
+                menuIcon.innerHTML = '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+            }
+        }
+
+        function closeMobileNav() {
+            const menu = document.getElementById('mobile-nav-menu');
+            const menuIcon = document.querySelector('#mobile-nav-button svg');
+            menu.classList.add('hidden');
+            menuIcon.innerHTML = '<path d="M3 6h18M3 12h18M3 18h18"/>';
+        }
+
+        // --- Dark Mode Toggle Logic ---
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            const isDark = html.classList.contains('dark');
+            
+            if (isDark) {
+                html.classList.remove('dark');
+                html.classList.add('light');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.remove('light');
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+            updateDarkModeIcon(html.classList.contains('dark'));
+        }
+
+        function updateDarkModeIcon(isDark) {
+            const iconContainer = document.getElementById('dark-mode-toggle-icon');
+            if (iconContainer) {
+                if (isDark) {
+                    iconContainer.innerHTML = '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/>';
+                    iconContainer.setAttribute('title', 'Switch to Light Mode');
+                } else {
+                    iconContainer.innerHTML = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2m-4-8h8m-12 0H2m4.24-8.76l1.42 1.42M16.34 7.66l1.42-1.42M7.66 16.34l-1.42 1.42M17.76 17.76l-1.42-1.42"/>';
+                    iconContainer.setAttribute('title', 'Switch to Dark Mode');
+                }
+            }
+        }
+
+        // Set initial theme
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.add('light');
+            }
+            updateDarkModeIcon(document.documentElement.classList.contains('dark'));
+        });
+
+        function setupModalHandlers() {
+            // Modal handlers setup
+        }
+
+        // Close modal on outside click
+        document.addEventListener('click', (e) => {
+            const modal = document.getElementById('galleryModal');
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

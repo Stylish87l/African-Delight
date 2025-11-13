@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu - African Delight Restaurant</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --font-playfair: 'Playfair Display', serif;
+            --font-inter: 'Inter', sans-serif;
+        }
+
+        /* --- DARK MODE STYLES (Default) --- */
+        .dark {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: rgba(30, 41, 59, 0.6);
+            --text-primary: white;
+            --text-secondary: #e2e8f0;
+            --text-muted: #94a3b8;
+            --accent-primary: #facc15;
+            --accent-dark: #ca8a04;
+            --border-color: #334155;
+        }
+        
+        /* --- LIGHT MODE STYLES (Toggle State) --- */
+        .light {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: rgba(255, 255, 255, 0.7);
+            --text-primary: #0f172a;
+            --text-secondary: #1e293b;
+            --text-muted: #475569;
+            --accent-primary: #d97706;
+            --accent-dark: #ea580c;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            font-family: var(--font-inter);
+            background-color: var(--bg-primary); 
+            color: var(--text-primary); 
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            transition: background-color 0.5s, color 0.5s;
+        }
+
+        .playfair {
+            font-family: var(--font-playfair);
+        }
+
+        /* Glass effect */
+        .glass {
+            backdrop-filter: blur(10px);
+            background-color: var(--bg-tertiary);
+        }
+
+        /* Glowing card styles */
+        .glow-card {
+            position: relative;
+            overflow: hidden;
+            transition: box-shadow 0.5s ease-out, transform 0.3s ease-out;
+            border: 1px solid rgba(253, 224, 71, 0.2);
+            background-color: var(--bg-tertiary);
+        }
+
+        .dark .glow-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, rgba(253, 224, 71, 0.3) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s;
+            z-index: 0;
+        }
+
+        .dark .glow-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(253, 224, 71, 0.4), inset 0 1px 0 rgba(253, 224, 71, 0.2);
+        }
+
+        .dark .glow-card:hover::before {
+            opacity: 1;
+        }
+
+        .light .glow-card {
+            border: 1px solid rgba(217, 119, 6, 0.2);
+            background-color: var(--bg-secondary);
+        }
+
+        .light .glow-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px rgba(217, 119, 6, 0.15);
+        }
+
+        .glow-card > * {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Menu image hover effect */
+        .menu-image-container:hover .menu-image {
+            transform: scale(1.15) rotate(2deg);
+        }
+
+        .menu-image {
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* Category filter buttons */
+        .category-btn {
+            padding: 10px 24px;
+            border: 2px solid var(--border-color);
+            background-color: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 50px;
+            transition: all 0.4s ease;
+            font-weight: 600;
+            font-family: var(--font-inter);
+            font-size: 14px;
+        }
+
+        .category-btn:hover {
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+        }
+
+        .category-btn.active {
+            background-color: var(--accent-primary);
+            color: var(--bg-primary);
+            border-color: var(--accent-primary);
+        }
+
+        /* Menu grid animation */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @media (max-width: 768px) {
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Price badge animation */
+        .price-badge {
+            display: inline-block;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        /* Modal Styles */
+        .modal {
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .modal.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .modal-content {
+            transition: transform 0.3s;
+        }
+
+        .modal.hidden .modal-content {
+            transform: scale(0.9);
+        }
+
+        /* FAB Menu */
+        #fab-menu.hidden {
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        #fab-menu {
+            transition: opacity 0.3s, transform 0.3s, visibility 0.3s;
+        }
+
+        /* Mobile Navigation */
+        #mobile-nav-menu.hidden {
+            opacity: 0;
+            transform: translateY(-10px) scale(0.95);
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        #mobile-nav-menu {
+            transition: opacity 0.3s, transform 0.3s, visibility 0.3s;
+        }
+
+        /* Scroll animation */
+        [data-animate] {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        [data-animate].visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="antialiased" onload="setupModalHandlers(); populateMenu(); setupScrollAnimation();">
+    
+    <!-- FAB Menu Button -->
+    <div class="fixed bottom-6 right-6 z-50">
+        <div id="fab-menu" class="hidden absolute bottom-16 right-0 w-max bg-slate-800/90 backdrop-blur-md rounded-xl shadow-2xl p-3 mb-2 border border-yellow-400/30">
+            <button onclick="openModal(); toggleFabMenu();" class="w-full text-left flex items-center p-3 rounded-lg text-white hover:bg-yellow-400/10 transition mb-2">
+                <svg class="w-5 h-5 text-yellow-400 mr-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10h12M7 14h12M19 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><path d="M12 21V4"/></svg>
+                Book a Table
+            </button>
+            <a href="https://wa.me/?text=Hello%20African%20Delight%2C%20I%20have%20an%20enquiry." target="_blank" class="w-full text-left flex items-center p-3 rounded-lg text-white hover:bg-yellow-400/10 transition">
+                <svg class="w-5 h-5 text-yellow-400 mr-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12.013 3c-4.995 0-9.043 4.048-9.043 9.043 0 1.583.41 3.093 1.173 4.417L3.06 21.05l5.053-1.33A8.995 8.995 0 0 0 12.013 21c4.995 0 9.043-4.048 9.043-9.043S17.008 3 12.013 3z"/></svg>
+                Chat on WhatsApp
+            </a>
+        </div>
+        <button onclick="toggleFabMenu()" id="fab-button" class="bg-yellow-600 text-slate-950 p-4 rounded-full shadow-2xl hover:bg-yellow-500 transition duration-300 transform hover:scale-105">
+            <svg class="w-7 h-7" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
+    </div>
+
+    <!-- Reservation Modal -->
+    <div id="reservationModal" class="modal hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+        <div class="modal-content bg-slate-800 p-8 rounded-xl shadow-2xl max-w-lg w-full m-4 border-2 border-yellow-400/50">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-3xl playfair font-bold text-yellow-400">Book Your Table</h3>
+                <button onclick="closeModal()" class="text-white hover:text-yellow-400 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            </div>
+            <form onsubmit="handleBooking(event)">
+                <div class="mb-4">
+                    <label for="name" class="block text-sm font-medium text-gray-300 mb-1">Full Name</label>
+                    <input type="text" id="name" required class="w-full p-3 rounded bg-slate-700 border border-slate-600 text-white focus:ring-yellow-400 focus:border-yellow-400">
+                </div>
+                <div class="mb-4">
+                    <label for="date" class="block text-sm font-medium text-gray-300 mb-1">Date</label>
+                    <input type="date" id="date" required class="w-full p-3 rounded bg-slate-700 border border-slate-600 text-white focus:ring-yellow-400 focus:border-yellow-400">
+                </div>
+                <div class="mb-4">
+                    <label for="time" class="block text-sm font-medium text-gray-300 mb-1">Time</label>
+                    <input type="time" id="time" required class="w-full p-3 rounded bg-slate-700 border border-slate-600 text-white focus:ring-yellow-400 focus:border-yellow-400">
+                </div>
+                <div class="mb-6">
+                    <label for="guests" class="block text-sm font-medium text-gray-300 mb-1">Number of Guests</label>
+                    <input type="number" id="guests" min="1" required class="w-full p-3 rounded bg-slate-700 border border-slate-600 text-white focus:ring-yellow-400 focus:border-yellow-400">
+                </div>
+                <button type="submit" class="w-full px-4 py-3 bg-yellow-600 text-slate-950 font-bold rounded hover:bg-yellow-500 transition duration-300">
+                    Confirm Reservation
+                </button>
+            </form>
+            <p id="bookingMessage" class="mt-4 text-center text-green-400 hidden">Booking confirmed! We look forward to seeing you.</p>
+        </div>
+    </div>
+
+    <div class="min-h-screen">
+        
+        <!-- Header -->
+        <!-- Updated navigation to match home page: Home, Menu, Services, Location, Gallery -->
+        <header class="fixed top-0 w-full z-40 transition-all duration-300 glass py-4 border-b border-white/10">
+            <div class="max-w-7xl mx-auto px-6 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl font-bold playfair tracking-wider" style="color: var(--accent-primary);">AFRICAN DELIGHT</span>
+                </div>
+                
+                <nav class="hidden md:flex items-center gap-8">
+                    <a href="https://sites.google.com/view/africandelight/home" class="text-sm font-medium transition-colors hover:text-yellow-400" style="color: var(--text-muted);">Home</a>
+                    <a href="https://sites.google.com/view/africandelight/menu" class="text-sm font-medium transition-colors hover:text-yellow-400" style="color: var(--accent-primary);">Menu</a>
+                    <a href="https://sites.google.com/view/africandelight/home#services" class="text-sm font-medium transition-colors hover:text-yellow-400" style="color: var(--text-muted);">Services</a>
+                    <a href="https://sites.google.com/view/africandelight/home#find-us" class="text-sm font-medium transition-colors hover:text-yellow-400" style="color: var(--text-muted);">Location</a>
+                    <a href="https://sites.google.com/view/africandelight/gallery" class="text-sm font-medium transition-colors hover:text-yellow-400" style="color: var(--text-muted);">Gallery</a>
+                </nav>
+
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleMobileNav()" id="mobile-nav-button" class="md:hidden p-2 rounded-full hover:bg-slate-700/50 transition" style="color: var(--accent-primary);">
+                        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 6h18M3 12h18M3 18h18"/>
+                        </svg>
+                    </button>
+
+                    <!-- Updated mobile navigation menu with new navigation items -->
+                    <div id="mobile-nav-menu" class="hidden absolute top-full right-0 mt-2 w-48 bg-slate-800/95 backdrop-blur-md rounded-xl shadow-2xl border border-yellow-400/30 overflow-hidden">
+                        <a href="https://sites.google.com/view/africandelight/home" onclick="closeMobileNav()" class="block px-4 py-3 text-sm font-medium hover:bg-yellow-400/10 transition border-b border-yellow-400/20" style="color: var(--text-secondary);">Home</a>
+                        <a href="https://sites.google.com/view/africandelight/menu" onclick="closeMobileNav()" class="block px-4 py-3 text-sm font-medium hover:bg-yellow-400/10 transition border-b border-yellow-400/20" style="color: var(--accent-primary);">Menu</a>
+                        <a href="https://sites.google.com/view/africandelight/home#services" onclick="closeMobileNav()" class="block px-4 py-3 text-sm font-medium hover:bg-yellow-400/10 transition border-b border-yellow-400/20" style="color: var(--text-secondary);">Services</a>
+                        <a href="https://sites.google.com/view/africandelight/home#find-us" onclick="closeMobileNav()" class="block px-4 py-3 text-sm font-medium hover:bg-yellow-400/10 transition border-b border-yellow-400/20" style="color: var(--text-secondary);">Location</a>
+                        <a href="https://sites.google.com/view/africandelight/gallery" onclick="closeMobileNav()" class="block px-4 py-3 text-sm font-medium hover:bg-yellow-400/10 transition" style="color: var(--text-secondary);">Gallery</a>
+                    </div>
+
+                    <button onclick="toggleDarkMode()" class="p-2 rounded-full hover:bg-slate-700/50 transition" style="color: var(--accent-primary);">
+                        <svg id="dark-mode-toggle-icon" class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            </svg>
+                    </button>
+                    <button onclick="openModal()" class="px-5 py-2 text-slate-950 font-semibold rounded hover:bg-yellow-500 transition-colors hidden md:block" style="background-color: var(--accent-primary);">
+                        BOOK NOW
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Menu Hero Section -->
+        <section class="relative pt-32 pb-16 px-6" style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.8) 100%);">
+            <div class="max-w-7xl mx-auto text-center" data-animate>
+                <p class="text-sm font-semibold uppercase tracking-widest mb-4" style="color: var(--accent-primary);">Culinary Excellence</p>
+                <h1 class="playfair text-6xl md:text-7xl font-extrabold tracking-tight mb-6" style="color: var(--text-primary);">
+                    Our Menu
+                </h1>
+                <p class="text-lg max-w-2xl mx-auto" style="color: var(--text-muted);">
+                    Explore our curated selection of authentic African dishes, crafted with passion and the finest ingredients
+                </p>
+            </div>
+        </section>
+
+        <!-- Menu Main Section -->
+        <section id="menu" class="py-24 px-6" style="background-color: var(--bg-primary);">
+            <div class="max-w-7xl mx-auto">
+                
+                <!-- Category Filter -->
+                <div class="flex flex-wrap justify-center gap-4 mb-16" data-animate>
+                    <button class="category-btn active" onclick="filterMenu('all', this)">All Dishes</button>
+                    <button class="category-btn" onclick="filterMenu('appetizers', this)">Appetizers</button>
+                    <button class="category-btn" onclick="filterMenu('mains', this)">Main Courses</button>
+                    <button class="category-btn" onclick="filterMenu('soups', this)">Soups & Stews</button>
+                    <button class="category-btn" onclick="filterMenu('sides', this)">Sides</button>
+                    <button class="category-btn" onclick="filterMenu('desserts', this)">Desserts</button>
+                    <button class="category-btn" onclick="filterMenu('drinks', this)">Beverages</button>
+                </div>
+
+                <!-- Menu Grid -->
+                <div id="menu-grid" class="menu-grid">
+                    <!-- Menu items will be populated here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action -->
+        <section class="py-20 px-6 border-t" style="background-color: var(--bg-secondary); border-color: var(--border-color);">
+            <div class="max-w-4xl mx-auto text-center" data-animate>
+                <h2 class="playfair text-5xl font-extrabold mb-6" style="color: var(--text-primary);">
+                    Ready to Taste African Excellence?
+                </h2>
+                <p class="text-lg mb-8" style="color: var(--text-muted);">
+                    Reserve your table now and indulge in an unforgettable culinary experience
+                </p>
+                <button onclick="openModal()" class="inline-flex items-center text-slate-950 font-bold py-4 px-12 rounded-full shadow-lg hover:bg-yellow-500 transition duration-300 transform hover:scale-105" style="background-color: var(--accent-primary);">
+                    BOOK YOUR TABLE
+                </button>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="border-t py-12 px-6" style="background-color: var(--bg-secondary); border-color: var(--border-color);">
+            <div class="max-w-7xl mx-auto">
+                <div class="grid md:grid-cols-3 gap-8 mb-8 items-center">
+                    <div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-xl font-bold playfair tracking-wider" style="color: var(--accent-primary);">AFRICAN DELIGHT</span>
+                        </div>
+                        <p class="text-sm" style="color: var(--text-muted);">Experience authentic African cuisine</p>
+                    </div>
+                    
+                    <div class="flex gap-6 justify-center">
+                        <a href="#" class="transition-colors" style="color: var(--text-muted);" title="Instagram">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 8a4 4 0 0 0-4-4A4 4 0 0 0 8 8M12 12m-3 0a3 3 0 1 0 6 0 3 3 0 1 0-6 0m5-8h.01"/></svg>
+                        </a>
+                        <a href="#" class="transition-colors" style="color: var(--text-muted);" title="Facebook">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                        </a>
+                        <a href="#" class="transition-colors" style="color: var(--text-muted);" title="Twitter">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 11-13.4 10a18 18 0 0 1-5-1c.6.9 1.4 1.7 2.4 2.3A12.7 12.7 0 0 0 8 20c.3 0 .7 0 1.2 0a2 2 0 0 0 2.2-2.2c0-.5 0-1-.3-1.4.6-.3 1.1-.7 1.6-1.2l.6-.7c1.7-2.1 2.5-4.5 2.5-7s-.8-4.9-2.5-7l.1-.1A11.4 11.4 0 0 1 14 3.7c.3.1.6.2.9.4s.6.5.9.8l.6.9c.7 1.2 1 2.7.9 4.3v.1a8.5 8.5 0 0 0 .5 3.3c.7 1.3 1.6 2.5 2.8 3.5.7.6 1.4 1.1 2.2 1.5l1.6.8"/></svg>
+                        </a>
+                        <a href="#" class="transition-colors" style="color: var(--text-muted);" title="TikTok">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.68v13.67a2.4 2.4 0 0 1-2.4 2.4 2.4 2.4 0 0 1-2.4-2.4c.34 0 .67.05.98.14V9.58a5.8 5.8 0 0 0-.98-.08 5.89 5.89 0 0 0 0 11.77 5.89 5.89 0 0 0 5.89-5.89V8.31a7.72 7.72 0 0 0 4.58 1.53V6.75a4.75 4.75 0 0 1-.6-.06z" /></svg>
+                        </a>
+                    </div>
+                    
+                    <div class="text-right">
+                        <p class="text-sm" style="color: var(--text-muted);">© 2025 African Delight Restaurant</p>
+                        <p class="text-sm" style="color: var(--text-muted);">All rights reserved</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <script>
+        const menuData = [
+            // Appetizers
+            {
+                category: 'appetizers',
+                name: 'Plantain Chips',
+                description: 'Golden, crispy fried plantain slices served with spiced pepper dip',
+                price: '₵25.00',
+                image: 'https://i.imgur.com/7Qk2tR8.webp'
+            },
+            {
+                category: 'appetizers',
+                name: 'Samosas',
+                description: 'Flaky pastry filled with spiced meat or vegetables, fried to perfection',
+                price: '₵30.00',
+                image: 'https://i.imgur.com/3Pv8mL2.webp'
+            },
+            {
+                category: 'appetizers',
+                name: 'Spring Rolls',
+                description: 'Crispy rolls stuffed with vegetables and choice of chicken or shrimp',
+                price: '₵28.00',
+                image: 'https://i.imgur.com/9Wj4kN1.webp'
+            },
+            // Main Courses
+            {
+                category: 'mains',
+                name: 'Jollof Fusion',
+                description: 'Smoked rice slow-cooked in rich tomato and pepper sauce with grilled prawns or smoked turkey',
+                price: '₵50.00',
+                image: 'https://i.imgur.com/wkT2CV8.webp'
+            },
+            {
+                category: 'mains',
+                name: 'Grilled Tilapia',
+                description: 'Whole fresh tilapia grilled with aromatic herbs and served with seasonal vegetables',
+                price: '₵55.00',
+                image: 'https://i.imgur.com/X8pL5q3.webp'
+            },
+            {
+                category: 'mains',
+                name: 'Fried Yam Chips',
+                description: 'Crispy yam chips with choice of chicken, fish, or beef served with spicy sauce',
+                price: '₵40.00',
+                image: 'https://i.imgur.com/8zQe2Du.webp'
+            },
+            {
+                category: 'mains',
+                name: 'Lamb Peppersoup Delight',
+                description: 'Tender lamb pieces in aromatic pepper soup with traditional African spices',
+                price: '₵48.00',
+                image: 'https://i.imgur.com/4Xt9sM7.webp'
+            },
+            {
+                category: 'mains',
+                name: 'Fufu & Light Soup',
+                description: 'Traditional pounded cassava and plantain served with delicious light soup',
+                price: '₵38.00',
+                image: 'https://i.imgur.com/6Yj2kL5.webp'
+            },
+            // Soups & Stews
+            {
+                category: 'soups',
+                name: 'Tilapia Light Soup',
+                description: 'Fresh tilapia in aromatic broth with tomatoes, herbs, and traditional spices',
+                price: '₵40.00',
+                image: 'https://i.imgur.com/oBpMGeq.webp'
+            },
+            {
+                category: 'soups',
+                name: 'Groundnut Stew',
+                description: 'Creamy peanut-based stew with meat, vegetables, and bold African flavors',
+                price: '₵35.00',
+                image: 'https://i.imgur.com/8Qk1pR7.webp'
+            },
+            {
+                category: 'soups',
+                name: 'Okra Soup',
+                description: 'Traditional okra soup with meat or fish, palm oil, and aromatic seasoning',
+                price: '₵32.00',
+                image: 'https://i.imgur.com/2Nv6jX4.webp'
+            },
+            {
+                category: 'soups',
+                name: 'Egusi Soup',
+                description: 'Melon seed soup with leafy greens, meat, and traditional African herbs',
+                price: '₵38.00',
+                image: 'https://i.imgur.com/5Wk3tL8.webp'
+            },
+            // Sides
+            {
+                category: 'sides',
+                name: 'Jollof Rice',
+                description: 'Fragrant rice cooked in tomato-based sauce with perfect spice balance',
+                price: '₵18.00',
+                image: 'https://i.imgur.com/3Xm7pQ2.webp'
+            },
+            {
+                category: 'sides',
+                name: 'Gari & Soup',
+                description: 'Cassava meal served with choice of savory soup',
+                price: '₵15.00',
+                image: 'https://i.imgur.com/7Jk9nR1.webp'
+            },
+            {
+                category: 'sides',
+                name: 'Coleslaw',
+                description: 'Fresh, crisp coleslaw with traditional African seasoning',
+                price: '₵12.00',
+                image: 'https://i.imgur.com/4Lm5kT3.webp'
+            },
+            {
+                category: 'sides',
+                name: 'Fried Plantains',
+                description: 'Sweet and savory fried plantain slices',
+                price: '₵14.00',
+                image: 'https://i.imgur.com/9Qj8sV2.webp'
+            },
+            // Desserts
+            {
+                category: 'desserts',
+                name: 'Chocolate Lava Cake',
+                description: 'Warm chocolate cake with molten center, topped with vanilla ice cream',
+                price: '₵22.00',
+                image: 'https://i.imgur.com/1Pm6tW9.webp'
+            },
+            {
+                category: 'desserts',
+                name: 'Mango Cheesecake',
+                description: 'Creamy cheesecake with fresh mango compote and crumbly base',
+                price: '₵24.00',
+                image: 'https://i.imgur.com/8Rn4vK7.webp'
+            },
+            {
+                category: 'desserts',
+                name: 'Banana Split',
+                description: 'Classic dessert with fresh banana, three ice cream flavors, and toppings',
+                price: '₵20.00',
+                image: 'https://i.imgur.com/3Hs7xL5.webp'
+            },
+            {
+                category: 'desserts',
+                name: 'Coconut Panna Cotta',
+                description: 'Silky coconut-flavored Italian custard with berry coulis',
+                price: '₵21.00',
+                image: 'https://i.imgur.com/6Tp2yM8.webp'
+            },
+            // Beverages
+            {
+                category: 'drinks',
+                name: 'Fresh Orange Juice',
+                description: 'Freshly squeezed orange juice - pure and refreshing',
+                price: '₵12.00',
+                image: 'https://i.imgur.com/2Kq5rN3.webp'
+            },
+            {
+                category: 'drinks',
+                name: 'Hibiscus Tea',
+                description: 'Traditional African hibiscus drink, sweet and tangy',
+                price: '₵10.00',
+                image: 'https://i.imgur.com/5Lj8pP2.webp'
+            },
+            {
+                category: 'drinks',
+                name: 'Mango Smoothie',
+                description: 'Creamy blend of mango, yogurt, and honey',
+                price: '₵15.00',
+                image: 'https://i.imgur.com/7Mw9sQ1.webp'
+            },
+            {
+                category: 'drinks',
+                name: 'Ginger Ale',
+                description: 'Spicy ginger-infused refreshing beverage',
+                price: '₵11.00',
+                image: 'https://i.imgur.com/9Nk3tR4.webp'
+            }
+        ];
+
+        let currentFilter = 'all';
+
+        function populateMenu(category = 'all') {
+            const grid = document.getElementById('menu-grid');
+            const filtered = category === 'all' ? menuData : menuData.filter(item => item.category === category);
+            
+            grid.innerHTML = filtered.map(item => `
+                <div class="glow-card rounded-2xl overflow-hidden" data-animate>
+                    <div class="menu-image-container relative h-64 overflow-hidden">
+                        <img src="${item.image}" alt="${item.name}" class="menu-image w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                    </div>
+                    <div class="p-6" style="background-color: var(--bg-tertiary);">
+                        <h3 class="text-2xl playfair font-bold mb-2" style="color: var(--accent-primary);">${item.name}</h3>
+                        <p class="mb-4 text-sm leading-relaxed" style="color: var(--text-muted);">${item.description}</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-2xl font-bold price-badge" style="color: var(--accent-primary);">${item.price}</span>
+                            <button onclick="openModal()" class="px-4 py-2 rounded-lg font-semibold transition duration-300" style="background-color: var(--accent-primary); color: var(--bg-primary);">
+                                Order
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            setupScrollAnimation();
+        }
+
+        function filterMenu(category, element) {
+            currentFilter = category;
+            document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+            populateMenu(category);
+        }
+
+        function setupScrollAnimation() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            const animatedElements = document.querySelectorAll('[data-animate]');
+            animatedElements.forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+        function toggleFabMenu() {
+            const menu = document.getElementById('fab-menu');
+            const fabButtonIcon = document.querySelector('#fab-button svg');
+            menu.classList.toggle('hidden');
+            
+            if (menu.classList.contains('hidden')) {
+                fabButtonIcon.innerHTML = '<path d="M12 5v14M5 12h14"/>';
+            } else {
+                fabButtonIcon.innerHTML = '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>';
+            }
+        }
+
+        function toggleMobileNav() {
+            const menu = document.getElementById('mobile-nav-menu');
+            const menuIcon = document.querySelector('#mobile-nav-button svg');
+            menu.classList.toggle('hidden');
+        }
+
+        function closeMobileNav() {
+            const menu = document.getElementById('mobile-nav-menu');
+            menu.classList.add('hidden');
+        }
+
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            const isDark = html.classList.contains('dark');
+            
+            if (isDark) {
+                html.classList.remove('dark');
+                html.classList.add('light');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.remove('light');
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+            updateDarkModeIcon(html.classList.contains('dark'));
+        }
+
+        function updateDarkModeIcon(isDark) {
+            const iconContainer = document.getElementById('dark-mode-toggle-icon');
+            if (iconContainer) {
+                if (isDark) {
+                    iconContainer.innerHTML = '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/>';
+                } else {
+                    iconContainer.innerHTML = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2m-4-8h8m-12 0H2m4.24-8.76l1.42 1.42M16.34 7.66l1.42-1.42M7.66 16.34l-1.42 1.42M17.76 17.76l-1.42-1.42"/>';
+                }
+            }
+        }
+
+        function openModal() {
+            document.getElementById('reservationModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('reservationModal').classList.add('hidden');
+            document.getElementById('bookingMessage').classList.add('hidden');
+        }
+
+        function handleBooking(event) {
+            event.preventDefault();
+            document.getElementById('bookingMessage').classList.remove('hidden');
+            setTimeout(closeModal, 3000);
+        }
+
+        function setupModalHandlers() {
+            // Modal handler setup
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.add('light');
+            }
+            updateDarkModeIcon(document.documentElement.classList.contains('dark'));
+            populateMenu();
+        });
+
+        // Close mobile nav when clicking outside
+        document.addEventListener('click', (e) => {
+            const mobileNav = document.getElementById('mobile-nav-menu');
+            const mobileBtn = document.getElementById('mobile-nav-button');
+            if (!mobileNav.contains(e.target) && !mobileBtn.contains(e.target)) {
+                closeMobileNav();
+            }
+        });
+    </script>
+</body>
+</html>
